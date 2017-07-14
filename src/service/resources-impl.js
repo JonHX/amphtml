@@ -1104,6 +1104,7 @@ export class Resources {
     const topOffset = viewportRect.height / 10;
     const bottomOffset = viewportRect.height / 10;
     const docBottomOffset = scrollHeight * 0.85;
+    const bottomOffsetThreshold = scrollHeight - 1000;
     const isScrollingStopped = (Math.abs(this.lastVelocity_) < 1e-2 &&
         now - this.lastScrollTime_ > MUTATE_DEFER_DELAY_ ||
         now - this.lastScrollTime_ > MUTATE_DEFER_DELAY_ * 2);
@@ -1205,9 +1206,12 @@ export class Resources {
             this.requestsChangeSize_.push(request);
           }
           continue;
-        } else if (iniBox.bottom >= docBottomOffset ||
-                      box.bottom >= docBottomOffset) {
+        } else if ((iniBox.bottom >= docBottomOffset &&
+          iniBox.bottom <= bottomOffsetThreshold) ||
+         (box.bottom >= docBottomOffset &&
+          box.bottom <= bottomOffsetThreshold)) {
           // 6. Elements close to the bottom of the document (not viewport)
+          // ( Within 15% of the bottom, maximum 1000px )
           // are resized immediately.
           resize = true;
         } else if (heightDiff < 0 || topMarginDiff < 0 ||
