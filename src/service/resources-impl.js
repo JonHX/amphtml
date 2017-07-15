@@ -1103,8 +1103,7 @@ export class Resources {
     const scrollHeight = this.viewport_.getScrollHeight();
     const topOffset = viewportRect.height / 10;
     const bottomOffset = viewportRect.height / 10;
-    const docBottomOffset = scrollHeight * 0.85;
-    const bottomOffsetThreshold = scrollHeight - 1000;
+    const docBottomOffset = Math.max(scrollHeight * 0.85, scrollHeight - 1000);
     const isScrollingStopped = (Math.abs(this.lastVelocity_) < 1e-2 &&
         now - this.lastScrollTime_ > MUTATE_DEFER_DELAY_ ||
         now - this.lastScrollTime_ > MUTATE_DEFER_DELAY_ * 2);
@@ -1206,10 +1205,8 @@ export class Resources {
             this.requestsChangeSize_.push(request);
           }
           continue;
-        } else if ((iniBox.bottom >= docBottomOffset &&
-          iniBox.bottom <= bottomOffsetThreshold) ||
-         (box.bottom >= docBottomOffset &&
-          box.bottom <= bottomOffsetThreshold)) {
+        } else if (iniBox.bottom >= docBottomOffset ||
+                      box.bottom >= docBottomOffset) {
           // 6. Elements close to the bottom of the document (not viewport)
           // ( Within 15% of the bottom, maximum 1000px )
           // are resized immediately.

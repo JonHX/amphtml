@@ -2379,15 +2379,17 @@ describe('Resources changeSize', () => {
 
     it('should change size when close to the bottom of the document', () => {
       viewportMock.expects('getScrollHeight').returns(110).once();
+      resource1.layoutBox_ = resource1.initialLayoutBox_ =
+          layoutRectLtwh(0, 10, 8001, 100);
       resources.scheduleChangeSize_(resource1, 111, 222, undefined, false);
       resources.mutateWork_();
       expect(resource1.changeSize).to.be.calledOnce;
     });
 
-    it('should NOT change size when more than 15% or 1000px from the bottom of the document', () => {
+    it('should NOT change size when more than 15% ( capped at 1000px ) from the bottom of the document', () => {
       viewportMock.expects('getScrollHeight').returns(9000).once();
       resource1.layoutBox_ = resource1.initialLayoutBox_ =
-          layoutRectLtwh(0, 10, 100, 7999);
+          layoutRectLtwh(0, 10, 7999, 100);
       resources.scheduleChangeSize_(resource1, 111, 222, undefined, false);
       resources.mutateWork_();
       expect(resource1.changeSize).to.not.been.called;
